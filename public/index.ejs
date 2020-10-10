@@ -6,66 +6,138 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
     <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script> -->
+    <link rel="stylesheet" href="./styles.css">
   </head>
   <body>
     <div class="container-sm">
+      <br>
+      <h2 class="display-3">Yotei <small class="text-muted display-3"> Decluttering made easy </small></h2><br>
       <div class="jumbotron mt-3">
-        <h1 class="display-3">Yotei - Decluttering made easy</h1><br>
-        <i class="fas fa-trash-alt"></i>
-        <h1 class="text-center font-weight-light">Total tasks: <%= data.length %></h1>
-        <div class="card-group">
-          <% for (var i=0;i<data.length;i++) { %>
-            <div class="col-sm-4">
-              <div class="card">
-                <div class="card-header">
-                  <%= data[i].coursename %>
-                </div>
-                <ul class="list-group list-group-flush">
-                  <% for(var j=0;j<data[i].all_deadlines.length;j++) { %>
-                    <% if(data[i].all_deadlines[j].type=="Homework") { %>
-                      <li class="list-group-item"><span class="badge badge-pill badge-dark"><%= data[i].all_deadlines[j].deadline %></span> <span class="badge badge-pill badge-success">Homework</span> <br> <%= data[i].all_deadlines[j].description %>
-                        <form action="/task/delete/<%- data[i]._id %>/<%- data[i].all_deadlines[j]._id %>" method="POST">
-                          <div class="form-group">
-                            <button type="submit" class="btn btn-outline-danger btn-sm">Delete</button>
-                          </div>
-                        </form>
-                      </li>
-                    <% } %>
-                    <% if(data[i].all_deadlines[j].type=="Assignment") { %>
-                      <li class="list-group-item"><span class="badge badge-pill badge-dark"><%= data[i].all_deadlines[j].deadline %></span> <span class="badge badge-pill badge-warning">Assignment</span> <br> <%= data[i].all_deadlines[j].description %>
-                        <form action="/task/delete/<%- data[i]._id %>/<%- data[i].all_deadlines[j]._id %>" method="POST">
-                          <div class="form-group">
-                            <button type="submit" class="btn btn-outline-danger btn-sm">Delete</button>
-                          </div>
-                        </form>
-                      </li>
-                    <% } %>
-                    <% if(data[i].all_deadlines[j].type=="Project") { %>
-                      <li class="list-group-item"><span class="badge badge-pill badge-dark"><%= data[i].all_deadlines[j].deadline %></span> <span class="badge badge-pill badge-info">Project</span> <br> <%= data[i].all_deadlines[j].description %>
-                        <form action="/task/delete/<%- data[i]._id %>/<%- data[i].all_deadlines[j]._id %>" method="POST">
-                          <div class="form-group">
-                            <button type="submit" class="btn btn-outline-danger btn-sm">Delete</button>
-                          </div>
-                        </form>
-                      </li>
-                    <% } %>
-                    <% if(data[i].all_deadlines[j].type=="Tutorial") { %>
-                      <li class="list-group-item"><span class="badge badge-pill badge-dark"><%= data[i].all_deadlines[j].deadline %></span> <span class="badge badge-pill badge-secondary">Tutorial</span> <br> <%= data[i].all_deadlines[j].description %>
-                        <form action="/task/delete/<%- data[i]._id %>/<%- data[i].all_deadlines[j]._id %>" method="POST">
-                          <div class="form-group">
-                            <button type="submit" class="btn btn-outline-danger btn-sm">Delete</button>
-                          </div>
-                        </form>
-                      </li>
-                    <% } %>
-                  <% } %>
-                </ul>
-              </div>
-            </div>
+
+        <!-- <i class="fas fa-trash-alt"></i> -->
+        <h2 class="text-center font-weight-light">Recent Deadlines</h2>
+        <div class="list-group">
+          <% if(tasks.length>0 && tasks!=undefined) { %>
+            <!-- <%= tasks %> -->
+            <% for(var i=0;i < Math.min(3,tasks.length);i++) { %>
+              <% if(tasks[i] && tasks[i].completed == false) { %>
+                <a href="#" class="list-group-item list-group-item-action active bg-dark">
+                  <div class="d-flex w-100 justify-content-between">
+                    <h5 class="mb-1"><%= tasks[i].coursename %> - <%= tasks[i].type %></h5>
+                    <small><%= tasks[i].deadline %></small>
+                  </div>
+                  <p class="mb-1"><%= tasks[i].description %></p>
+                  <!-- <small>Donec id elit non mi porta.</small> -->
+                </a>
+              <% } %>
+            <% } %>
           <% } %>
         </div>
+
+        <h2 class="text-center font-weight-light">Completed</h2>
+        <div class="list-group">
+          <% for(var i=0;i<tasks.length;i++) { %>
+            <% if(tasks[i].completed==true) { %>
+              <a href="#" class="list-group-item list-group-item-action active bg-dark">
+                <div class="d-flex w-100 justify-content-between">
+                  <h5 class="mb-1"><%= tasks[i].coursename %> - <%= tasks[i].type %></h5>
+                  <!-- <small><%= tasks[i].deadline %></small> -->
+                </div>
+                <p class="mb-1"><%= tasks[i].description %></p>
+                <small>Completed on <%= tasks[i].completedOn %> </small>
+                <!-- <% if(Math.floor((new Date(tasks[i].completedOn)-new Date(tasks[i].deadline))/(1000 * 60 * 60 * 24))==0) { %>
+                  <small>Completed on <%= tasks[i].completedOn %> [Right on time]</small>
+                <% } %>
+                <% if(Math.floor((new Date(tasks[i].completedOn)-new Date(tasks[i].deadline))/(1000 * 60 * 60 * 24)) < 0) { %>
+                  <small>Completed on <%= tasks[i].completedOn %> [<%= -1 *Math.floor((new Date(tasks[i].completedOn)-new Date(tasks[i].deadline))/(1000 * 60 * 60 * 24)) %> days early]</small>
+                <% } %> -->
+              </a>
+            <% } %>
+          <% } %>
+        </div>
+
+        <br>
+
+        <!-- <h1 class="text-center font-weight-light">Total deadlines: <%= tasks.length %></h1> -->
+        <h1 class="text-center font-weight-light">Pending Tasks</h1>
+        <div class="card-columns">
+          <% for (var i=0;i<data.length;i++) { %>
+            <% if(data[i].all_deadlines.length==1 && data[i].all_deadlines[0].completed==false) { %>
+              <div >
+                <div class="card bg-dark text-light">
+                  <div class="card-header">
+                    <%= data[i].coursename %>
+                  </div>
+                  <ul class="list-group list-group-flush text-dark">
+                    <% for(var j=0;j<data[i].all_deadlines.length;j++) { %>
+                      <% if(data[i].all_deadlines[j].completed==false) { %>
+                        <% if(data[i].all_deadlines[j].type=="Homework") { %>
+                          <li class="list-group-item"><span class="badge badge-pill badge-dark"><%= data[i].all_deadlines[j].deadline %></span> <span class="badge badge-pill badge-success">Homework</span> <br> <%= data[i].all_deadlines[j].description %>
+                            <form action="/task/delete/<%- data[i]._id %>/<%- data[i].all_deadlines[j]._id %>" method="POST">
+                              <div class="form-group">
+                                <button type="submit" class="btn btn-outline-danger btn-sm">Delete</button>
+                              </div>
+                            </form>
+                            <form action="/task/completed/<%- data[i]._id %>/<%- data[i].all_deadlines[j]._id %>" method="POST">
+                              <div class="form-group">
+                                <button type="submit" class="btn btn-outline-warning btn-sm">Completed</button>
+                              </div>
+                            </form>
+                          </li>
+                        <% } %>
+                        <% if(data[i].all_deadlines[j].type=="Assignment") { %>
+                          <li class="list-group-item"><span class="badge badge-pill badge-dark"><%= data[i].all_deadlines[j].deadline %></span> <span class="badge badge-pill badge-warning">Assignment</span> <br> <%= data[i].all_deadlines[j].description %>
+                            <form action="/task/delete/<%- data[i]._id %>/<%- data[i].all_deadlines[j]._id %>" method="POST">
+                              <div class="form-group">
+                                <button type="submit" class="btn btn-outline-danger btn-sm">Delete</button>
+                              </div>
+                            </form>
+                            <form action="/task/completed/<%- data[i]._id %>/<%- data[i].all_deadlines[j]._id %>" method="POST">
+                              <div class="form-group">
+                                <button type="submit" class="btn btn-outline-warning btn-sm">Completed</button>
+                              </div>
+                            </form>
+                          </li>
+                        <% } %>
+                        <% if(data[i].all_deadlines[j].type=="Project") { %>
+                          <li class="list-group-item"><span class="badge badge-pill badge-dark"><%= data[i].all_deadlines[j].deadline %></span> <span class="badge badge-pill badge-info">Project</span> <br> <%= data[i].all_deadlines[j].description %>
+                            <form action="/task/delete/<%- data[i]._id %>/<%- data[i].all_deadlines[j]._id %>" method="POST">
+                              <div class="form-group">
+                                <button type="submit" class="btn btn-outline-danger btn-sm">Delete</button>
+                              </div>
+                            </form>
+                            <form action="/task/completed/<%- data[i]._id %>/<%- data[i].all_deadlines[j]._id %>" method="POST">
+                              <div class="form-group">
+                                <button type="submit" class="btn btn-outline-warning btn-sm">Completed</button>
+                              </div>
+                            </form>
+                          </li>
+                        <% } %>
+                        <% if(data[i].all_deadlines[j].type=="Tutorial") { %>
+                          <li class="list-group-item"><span class="badge badge-pill badge-dark"><%= data[i].all_deadlines[j].deadline %></span> <span class="badge badge-pill badge-secondary">Tutorial</span> <br> <%= data[i].all_deadlines[j].description %>
+                            <form action="/task/delete/<%- data[i]._id %>/<%- data[i].all_deadlines[j]._id %>" method="POST">
+                              <div class="form-group">
+                                <button type="submit" class="btn btn-outline-danger btn-sm">Delete</button>
+                              </div>
+                            </form>
+                            <form action="/task/completed/<%- data[i]._id %>/<%- data[i].all_deadlines[j]._id %>" method="POST">
+                              <div class="form-group">
+                                <button type="submit" class="btn btn-outline-warning btn-sm">Completed</button>
+                              </div>
+                            </form>
+                          </li>
+                        <% } %>
+                      <% } %>
+                    <% } %>
+                  </ul>
+                </div>
+              </div>
+            <% } %>
+          <% } %>
+        </div>
+
       </div>
-      <button onclick="presentAddForm()" type="button" class="btn btn-primary btn-lg btn-block">Add a course</button>
+      <button onclick="presentAddForm()" type="button" class="btn btn-primary btn-lg btn-block">Add a task</button>
       <div id="form1" style = "display:none">
         <form id='AddForm' action="/" method="POST">
           <div class="form-group">

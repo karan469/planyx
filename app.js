@@ -2,7 +2,7 @@ var express = require('express'),
     app = express(),
     bodyParser = require('body-parser'),
     mongoose = require('mongoose');
-const { Schema } = mongoose;
+    Course = require('./models/courses.js')
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({'extended':'true'}));
@@ -10,34 +10,40 @@ app.use(express.static(__dirname + '/public'));
 app.set('views', './public');
 app.set('view engine', 'ejs');
 
-mongoose.connect("mongodb://localhost/yotei-1",{useFindAndModify: false});
+// mongoose.connect("mongodb://localhost/yotei-1",{useFindAndModify: false});
 
-var taskSchema = new mongoose.Schema({
-  deadline: String,
-  coursename: String,
-  type: String,
-  description: String,
-  _taskid: Schema.Types.ObjectId
+mongoose.connect("mongodb+srv://karan:karanaman123@yotei-1.twybd.azure.mongodb.net/yotei-1-1?retryWrites=true&w=majority",{dbName: 'yotei-1-1', useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false})
+.then( () => {
+  console.log('Connection to the Atlas Cluster is successful!')
 })
+.catch( (err) => console.error(err));
 
-var CourseSchema = new mongoose.Schema({
-  coursename: String,
-  all_deadlines: [taskSchema]
-});
-var Course = mongoose.model("Course", CourseSchema);
 
-app.get('/',(req,res)=>{
-  recentTasks = [];
-  // Course.find({all_deadlines: })
+// Homepage
+app.get('/',async (req,res)=>{
   Course.find({all_deadlines: {$not: {$size: 0}}},function(err,data){
+    // console.log(data)
     if(err) {console.log(err);}
-    if(data==undefined){res.render('index.ejs',{data: {}});}
-    else {res.render('index.ejs',{data: data});}
+    if(data==undefined || data==[]){res.render('index.ejs',{data: {}, tasks: {}});}
+    else {
+      all_tasks = []
+      for(var i=0;i<data.length;i++){
+        for(var j=0;j<data[i].all_deadlines.length;j++){
+          all_tasks.push(data[i].all_deadlines[j]);
+        }
+      }
+      all_tasks = all_tasks.sort(function(a,b){
+        return (new Date(a.deadline)-new Date(b.deadline));
+      });
+      // console.log(all_tasks);
+      res.render('index.ejs',{data: data, tasks: all_tasks});
+    }
   });
 });
 
+// Add a task
 app.post('/',(req,res)=>{
-  console.log(req.body)
+  // console.log(req.body)
 
   var date = new Date(req.body.date.split('-').reverse().join('-'));
   date = date.toDateString();
@@ -52,16 +58,16 @@ app.post('/',(req,res)=>{
   }
 
   Course.findOne({coursename: req.body.coursename},function(err,data){
-    console.log(data);
+    // console.log(data);
     if(data){
-      Course.updateOne({coursename: req.body.coursename},{ $push: { all_deadlines: {"deadline": date, "type": type, "description": req.body.descr, "coursename": req.body.coursename} } },function(err,data_1){
+      Course.updateOne({coursename: req.body.coursename},{ $push: { all_deadlines: {"createdOn": (new Date()).toDateString(), "deadline": date, "type": type, "description": req.body.descr, "coursename": req.body.coursename, "completed": false} } },function(err,data_1){
         if(err)
           console.log(err);
         res.redirect('/');
       });
     }
     else {
-      Course.create({coursename: req.body.coursename, all_deadlines:[{"deadline": date, "type": type, "description": req.body.descr, "coursename": req.body.coursename}]},(err,data_2)=>{
+      Course.create({coursename: req.body.coursename, all_deadlines:[{"createdOn": (new Date()).toDateString(), "deadline": date, "type": type, "description": req.body.descr, "coursename": req.body.coursename, "completed": false}]},(err,data_2)=>{
         if(err){
           console.log(err);
         }
@@ -72,9 +78,29 @@ app.post('/',(req,res)=>{
 
 });
 
+// Mark the task complete
+app.post('/task/completed/:courseid/:taskid',function(req,res){
+  Course.findOneAndUpdate({_id: req.params.courseid},{},(err,data)=>{
+    if(err)
+      console.log(err);
+    console.log(data)
+    for(var i=0;i<data.all_deadlines.length;i++){
+      if(data.all_deadlines[i]._id==req.params.taskid){
+        data.all_deadlines[i].completed = true;
+        console.log('Status changed');
+        data.all_deadlines[i].completedOn = (new Date()).toDateString();
+        break;
+      }
+    }
+    data.save();
+    res.redirect('/');
+  })
+})
+
+// Delete the task
 app.post('/task/delete/:courseid/:taskid',function(req,res){
-  console.log('courseid:'+req.params.courseid);
-  console.log('taskid: '+req.params.taskid);
+  // console.log('courseid:'+req.params.courseid);
+  // console.log('taskid: '+req.params.taskid);
   Course.findOneAndUpdate({_id: req.params.courseid},{/*$pullAll: {all_deadlines: [req.params.taskid]}*/},function(err,data){
     if(err)
       console.log(err);
@@ -89,4 +115,5 @@ app.post('/task/delete/:courseid/:taskid',function(req,res){
   });
 });
 
-app.listen(3000,()=>{console.log('Server started at 3000')});
+port = process.env.PORT || 3000
+app.listen(port,()=>{console.log('Server started at '+port)});
