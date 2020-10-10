@@ -9,6 +9,7 @@ var taskSchema = new mongoose.Schema({
   createdOn: String,
   completed: Boolean,
   completedOn: String,
+  // deleteOn: String,
   _taskid: Schema.Types.ObjectId
 })
 

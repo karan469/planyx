@@ -11,58 +11,65 @@
   <body>
     <div class="container-sm">
       <br>
-      <h2 class="display-3">Planyx </h2><h4><small class="text-muted display-3"> Manage your college life. </small></h4>
+      <h2 class="display-4 text-white">Planyx </h2><h4><small class="text-muted display-4"> Manage your semester. </small></h4>
       <div class="jumbotron mt-3">
 
         <!-- <i class="fas fa-trash-alt"></i> -->
-        <h2 class="text-center font-weight-light">Recent Deadlines</h2>
-        <div class="list-group">
-          <% if(tasks.length>0 && tasks!=undefined) { %>
-            <!-- <%= tasks %> -->
-            <% for(var i=0;i < Math.min(3,tasks.length);i++) { %>
-              <% if(tasks[i] && tasks[i].completed == false) { %>
+        <div class="card-deck">
+          <!-- <h3 class="text-center font-weight-light">Recent Deadlines</h3> -->
+          <div class="card">
+            <a href="#" class="list-group-item list-group-item-action active bg-dark disabled">
+              <h3 class="text-center font-weight-light">Recent Deadlines</h3>
+            </a>
+            <% if(tasks.length>0 && tasks!=undefined) { %>
+              <!-- <%= tasks %> -->
+              <% for(var i=0;i < Math.min(3,tasks.length);i++) { %>
+                <% if(tasks[i] && tasks[i].completed == false) { %>
+                  <a href="#" class="list-group-item list-group-item-action active bg-dark disabled">
+                    <div class="d-flex w-100 justify-content-between">
+                      <h5 class="mb-1"><%= tasks[i].coursename %> - <%= tasks[i].type %></h5>
+                      <small><%= tasks[i].deadline %></small>
+                    </div>
+                    <p class="mb-1"><%= tasks[i].description %></p>
+                    <!-- <small>Donec id elit non mi porta.</small> -->
+                  </a>
+                <% } %>
+              <% } %>
+            <% } %>
+          </div>
+
+
+          <div class="card">
+            <a href="#" class="list-group-item list-group-item-action active bg-dark">
+              <h3 class="text-center font-weight-light">Recently Completed</h3>
+            </a>
+            <% for(var i=0;i<Math.min(3,tasks.length);i++) { %>
+              <% if(tasks[i].completed==true) { %>
                 <a href="#" class="list-group-item list-group-item-action active bg-dark">
                   <div class="d-flex w-100 justify-content-between">
                     <h5 class="mb-1"><%= tasks[i].coursename %> - <%= tasks[i].type %></h5>
                     <small><%= tasks[i].deadline %></small>
                   </div>
                   <p class="mb-1"><%= tasks[i].description %></p>
-                  <!-- <small>Donec id elit non mi porta.</small> -->
+                  <small>Completed on <%= tasks[i].completedOn %> </small>
+                  <!-- <% if(Math.floor((new Date(tasks[i].completedOn)-new Date(tasks[i].deadline))/(1000 * 60 * 60 * 24))==0) { %>
+                    <small>Completed on <%= tasks[i].completedOn %> [Right on time]</small>
+                  <% } %>
+                  <% if(Math.floor((new Date(tasks[i].completedOn)-new Date(tasks[i].deadline))/(1000 * 60 * 60 * 24)) < 0) { %>
+                    <small>Completed on <%= tasks[i].completedOn %> [<%= -1 *Math.floor((new Date(tasks[i].completedOn)-new Date(tasks[i].deadline))/(1000 * 60 * 60 * 24)) %> days early]</small>
+                  <% } %> -->
                 </a>
               <% } %>
             <% } %>
-          <% } %>
+          </div>
         </div>
-
-        <h2 class="text-center font-weight-light">Completed</h2>
-        <div class="list-group">
-          <% for(var i=0;i<tasks.length;i++) { %>
-            <% if(tasks[i].completed==true) { %>
-              <a href="#" class="list-group-item list-group-item-action active bg-dark">
-                <div class="d-flex w-100 justify-content-between">
-                  <h5 class="mb-1"><%= tasks[i].coursename %> - <%= tasks[i].type %></h5>
-                  <!-- <small><%= tasks[i].deadline %></small> -->
-                </div>
-                <p class="mb-1"><%= tasks[i].description %></p>
-                <small>Completed on <%= tasks[i].completedOn %> </small>
-                <!-- <% if(Math.floor((new Date(tasks[i].completedOn)-new Date(tasks[i].deadline))/(1000 * 60 * 60 * 24))==0) { %>
-                  <small>Completed on <%= tasks[i].completedOn %> [Right on time]</small>
-                <% } %>
-                <% if(Math.floor((new Date(tasks[i].completedOn)-new Date(tasks[i].deadline))/(1000 * 60 * 60 * 24)) < 0) { %>
-                  <small>Completed on <%= tasks[i].completedOn %> [<%= -1 *Math.floor((new Date(tasks[i].completedOn)-new Date(tasks[i].deadline))/(1000 * 60 * 60 * 24)) %> days early]</small>
-                <% } %> -->
-              </a>
-            <% } %>
-          <% } %>
-        </div>
-
         <br>
 
         <!-- <h1 class="text-center font-weight-light">Total deadlines: <%= tasks.length %></h1> -->
-        <h1 class="text-center font-weight-light">Pending Tasks</h1>
+        <h3 class="text-center font-weight-light">Pending Tasks</h3>
         <div class="card-columns">
           <% for (var i=0;i<data.length;i++) { %>
-            <% if(data[i].all_deadlines.length==1 && data[i].all_deadlines[0].completed==false) { %>
+            <% if((data[i].all_deadlines.length==1 && data[i].all_deadlines[0].completed==false) || data[i].all_deadlines.length>1) { %>
               <div >
                 <div class="card bg-dark text-light">
                   <div class="card-header">
@@ -138,17 +145,17 @@
 
       </div>
       <button onclick="presentAddForm()" type="button" class="btn btn-primary btn-lg btn-block">Add a task</button>
-      <div id="form1" style = "display:none">
+      <div id="form1" style = "display:none" class="text-white">
         <form id='AddForm' action="/" method="POST">
           <div class="form-group">
             <label for="courseselect">Course Name</label>
             <select name="coursename" class="form-control" id="courseselect">
-              <option value="COL703">COL703</option>
-              <option value="HUL212">HUL212</option>
-              <option value="COL764">COL764</option>
-              <option value="COL759">COL759</option>
-              <option value="COL351">COL351</option>
-              <option value="COD891">COD891</option>
+              <option value="COL703">COL703 - Logic for CS</option>
+              <option value="HUL212">HUL212 - Microeconomics</option>
+              <option value="COL764">COL764 - Information retrieval</option>
+              <option value="COL759">COL759 - Crytography</option>
+              <option value="COL351">COL351 - Analysis and Design of Algo.</option>
+              <option value="COD891">COD891 - Minor Project</option>
             </select>
             <small id="courseHelp" class="form-text text-muted">All the best in advance ;)</small>
           </div>
