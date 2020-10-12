@@ -40,12 +40,12 @@
 
 
           <div class="card">
-            <a href="#" class="list-group-item list-group-item-action active bg-dark">
+            <a href="#" class="list-group-item list-group-item-action active bg-dark disabled">
               <h3 class="text-center font-weight-light">Recently Completed</h3>
             </a>
             <% for(var i=0;i<Math.min(3,tasks.length);i++) { %>
               <% if(tasks[i].completed==true) { %>
-                <a href="#" class="list-group-item list-group-item-action active bg-dark">
+                <a href="#" class="list-group-item list-group-item-action active bg-dark disabled">
                   <div class="d-flex w-100 justify-content-between">
                     <h5 class="mb-1"><%= tasks[i].coursename %> - <%= tasks[i].type %></h5>
                     <small><%= tasks[i].deadline %></small>
