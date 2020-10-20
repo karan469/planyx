@@ -58,7 +58,7 @@ app.get('/',async (req,res)=>{
         return (new Date(b.completedOn)-new Date(a.completedOn));
       });
 
-      console.log(recent_completed)
+      // console.log(recent_completed)
 
       // all_tasks = all_tasks.sort(function(a,b){
       //   return (new Date(a.deadline)-new Date(b.deadline));
