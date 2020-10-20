@@ -12,6 +12,7 @@
     <div class="container-sm">
       <br>
       <h2 class="display-4 text-white">Planyx </h2><h4><small class="text-muted display-4"> Manage your semester. </small></h4>
+      <h4><small class="text-muted display-5"> - Exclusively for Karan Tanwar </small></h4>
       <div class="jumbotron mt-3">
 
         <!-- <i class="fas fa-trash-alt"></i> -->
@@ -21,16 +22,15 @@
             <a href="#" class="list-group-item list-group-item-action active bg-dark disabled">
               <h3 class="text-center font-weight-light">Recent Deadlines</h3>
             </a>
-            <% if(tasks.length>0 && tasks!=undefined) { %>
-              <!-- <%= tasks %> -->
-              <% for(var i=0;i < Math.min(3,tasks.length);i++) { %>
-                <% if(tasks[i] && tasks[i].completed == false) { %>
+            <% if(recent_deadlines.length>0 && recent_deadlines!=undefined) { %>
+              <% for(var i=0;i < Math.min(3,recent_deadlines.length);i++) { %>
+                <% if(recent_deadlines[i] && recent_deadlines[i].completed == false) { %>
                   <a href="#" class="list-group-item list-group-item-action active bg-dark disabled">
                     <div class="d-flex w-100 justify-content-between">
-                      <h5 class="mb-1"><%= tasks[i].coursename %> - <%= tasks[i].type %></h5>
-                      <small><%= tasks[i].deadline %></small>
+                      <h5 class="mb-1"><%= recent_deadlines[i].coursename %> - <%= recent_deadlines[i].type %></h5>
+                      <small><%= recent_deadlines[i].deadline %></small>
                     </div>
-                    <p class="mb-1"><%= tasks[i].description %></p>
+                    <p class="mb-1"><%= recent_deadlines[i].description %></p>
                     <!-- <small>Donec id elit non mi porta.</small> -->
                   </a>
                 <% } %>
@@ -40,18 +40,18 @@
 
 
           <div class="card">
-            <a href="#" class="list-group-item list-group-item-action active bg-dark">
+            <a href="#" class="list-group-item list-group-item-action active bg-dark disabled">
               <h3 class="text-center font-weight-light">Recently Completed</h3>
             </a>
-            <% for(var i=0;i<Math.min(3,tasks.length);i++) { %>
-              <% if(tasks[i].completed==true) { %>
-                <a href="#" class="list-group-item list-group-item-action active bg-dark">
+            <% for(var i=0;i<Math.min(3,recent_completed.length);i++) { %>
+              <% if(recent_completed[i].completed==true) { %>
+                <a href="#" class="list-group-item list-group-item-action active bg-dark disabled">
                   <div class="d-flex w-100 justify-content-between">
-                    <h5 class="mb-1"><%= tasks[i].coursename %> - <%= tasks[i].type %></h5>
-                    <small><%= tasks[i].deadline %></small>
+                    <h5 class="mb-1"><%= recent_completed[i].coursename %> - <%= recent_completed[i].type %></h5>
+                    <small><%= recent_completed[i].deadline %></small>
                   </div>
-                  <p class="mb-1"><%= tasks[i].description %></p>
-                  <small>Completed on <%= tasks[i].completedOn %> </small>
+                  <p class="mb-1"><%= recent_completed[i].description %></p>
+                  <small>Completed on <%= recent_completed[i].completedOn %> </small>
                   <!-- <% if(Math.floor((new Date(tasks[i].completedOn)-new Date(tasks[i].deadline))/(1000 * 60 * 60 * 24))==0) { %>
                     <small>Completed on <%= tasks[i].completedOn %> [Right on time]</small>
                   <% } %>

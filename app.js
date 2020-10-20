@@ -22,7 +22,6 @@ mongoose.connect("mongodb+srv://karan:karanaman123@yotei-1.twybd.azure.mongodb.n
 // Homepage
 app.get('/',async (req,res)=>{
   Course.find({all_deadlines: {$not: {$size: 0}}},function(err,data){
-    // console.log(data)
     if(err) {console.log(err);}
     if(data==undefined || data==[]){res.render('index.ejs',{data: {}, tasks: {}});}
     else {
@@ -32,11 +31,39 @@ app.get('/',async (req,res)=>{
           all_tasks.push(data[i].all_deadlines[j]);
         }
       }
-      all_tasks = all_tasks.sort(function(a,b){
+      
+      recent_deadlines = []
+      var i=0;
+      while(i<all_tasks.length){
+        if(recent_deadlines.length==3) break;
+        if(all_tasks[i].completed==false){
+          recent_deadlines.push(all_tasks[i])
+        }
+        i+=1
+      }
+      recent_deadlines = recent_deadlines.sort(function(a,b){
         return (new Date(a.deadline)-new Date(b.deadline));
       });
-      // console.log(all_tasks);
-      res.render('index.ejs',{data: data, tasks: all_tasks});
+
+      recent_completed=[]
+      var i=0;
+      while(i<all_tasks.length){
+        if(recent_completed.length==3) break;
+        if(all_tasks[i].completed==true){
+          recent_completed.push(all_tasks[i])
+        }
+        i+=1
+      }
+      recent_completed = recent_completed.sort(function(a,b){
+        return (new Date(b.completedOn)-new Date(a.completedOn));
+      });
+
+      console.log(recent_completed)
+
+      // all_tasks = all_tasks.sort(function(a,b){
+      //   return (new Date(a.deadline)-new Date(b.deadline));
+      // });
+      res.render('index.ejs',{data: data, tasks: all_tasks/*, recent_deadlines: recent_deadlines*/, recent_completed: recent_completed});
     }
   });
 });
