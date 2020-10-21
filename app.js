@@ -45,20 +45,23 @@ app.get('/',async (req,res)=>{
         return (new Date(a.deadline)-new Date(b.deadline));
       });
 
-      recent_completed=[]
-      var i=0;
-      while(i<all_tasks.length){
-        if(recent_completed.length==3) break;
-        if(all_tasks[i].completed==true){
-          recent_completed.push(all_tasks[i])
-        }
-        i+=1
-      }
-      recent_completed = recent_completed.sort(function(a,b){
+      all_tasks = all_tasks.sort(function(a,b){
         return (new Date(b.completedOn)-new Date(a.completedOn));
       });
 
-      // console.log(recent_completed)
+      recent_completed = []
+      for(var i=0;i<all_tasks.length;i++){
+        if(all_tasks[i].completed==true)
+            recent_completed.push(all_tasks[i]);
+        if(recent_completed.length==3)
+            break;
+      }
+      
+      // recent_completed = recent_completed.sort(function(a,b){
+      //   return (new Date(b.completedOn)-new Date(a.completedOn));
+      // });
+
+      console.log(recent_completed)
 
       // all_tasks = all_tasks.sort(function(a,b){
       //   return (new Date(a.deadline)-new Date(b.deadline));
