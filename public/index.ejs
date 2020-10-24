@@ -31,7 +31,7 @@
                       <!-- <small><%= recent_deadlines[i].deadline %></small> -->
                     </div>
                     <p class="mb-1"><%= recent_deadlines[i].description %></p>
-                    <small><%= 1-(new Date()).getDate() + (new Date(recent_deadlines[i].deadline)).getDate() %> day(s) remaining.</small>
+                    <small><%= -(new Date()).getDate() + (new Date(recent_deadlines[i].deadline)).getDate() %> day(s) remaining.</small>
                   </a>
                 <% } %>
               <% } %>
