@@ -28,10 +28,10 @@
                   <a href="#" class="list-group-item list-group-item-action active bg-dark disabled">
                     <div class="d-flex w-100 justify-content-between">
                       <h5 class="mb-1"><%= recent_deadlines[i].coursename %> - <%= recent_deadlines[i].type %></h5>
-                      <small><%= recent_deadlines[i].deadline %></small>
+                      <!-- <small><%= recent_deadlines[i].deadline %></small> -->
                     </div>
                     <p class="mb-1"><%= recent_deadlines[i].description %></p>
-                    <!-- <small>Donec id elit non mi porta.</small> -->
+                    <small><%= 1-(new Date()).getDate() + (new Date(recent_deadlines[i].deadline)).getDate() %> day(s) remaining.</small>
                   </a>
                 <% } %>
               <% } %>

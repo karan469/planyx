@@ -32,18 +32,17 @@ app.get('/',async (req,res)=>{
         }
       }
       
-      recent_deadlines = []
-      var i=0;
-      while(i<all_tasks.length){
-        if(recent_deadlines.length==3) break;
-        if(all_tasks[i].completed==false){
-          recent_deadlines.push(all_tasks[i])
-        }
-        i+=1
-      }
-      recent_deadlines = recent_deadlines.sort(function(a,b){
+      all_tasks = all_tasks.sort(function(a,b){
         return (new Date(a.deadline)-new Date(b.deadline));
       });
+
+      recent_deadlines = []
+      for(var i=0;i<all_tasks.length;i++){
+        if(all_tasks[i].completed==false)
+          recent_deadlines.push(all_tasks[i])
+        if(recent_deadlines.length==3)
+          break
+      }
 
       all_tasks = all_tasks.sort(function(a,b){
         return (new Date(b.completedOn)-new Date(a.completedOn));
@@ -61,7 +60,7 @@ app.get('/',async (req,res)=>{
       //   return (new Date(b.completedOn)-new Date(a.completedOn));
       // });
 
-      console.log(recent_completed)
+      // console.log(recent_completed)
 
       // all_tasks = all_tasks.sort(function(a,b){
       //   return (new Date(a.deadline)-new Date(b.deadline));
